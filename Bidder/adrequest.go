@@ -32,10 +32,12 @@ func AdRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	dice := rand.Intn(100)
 	random := rand.NewSource(time.Now().UnixNano())
+	randObj := rand.New(random)
+	time.Sleep(time.Millisecond * time.Duration(randObj.Intn(250)))
 	if dice > 50 {
 		resp, _ := json.Marshal(AdObject{
 			AdID:     generateUniqueIDforAd(),
-			BidPrice: rand.New(random).Float64() * 100,
+			BidPrice: randObj.Float64() * 100,
 		})
 		SendJSONHttpResponse(w, resp, http.StatusOK)
 	} else {

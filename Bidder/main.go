@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Welcome to the warpzone")
+	fmt.Println("Let's place some bids")
 	r := mux.NewRouter()
 
 	registerRoutes(r)

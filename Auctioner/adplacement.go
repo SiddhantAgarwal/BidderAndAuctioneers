@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"sort"
-	"strings"
 	"time"
 )
 
@@ -30,7 +28,7 @@ func AdPlacementHandler(w http.ResponseWriter, r *http.Request) {
 	result := make(chan Bid)
 	timeDone := make(chan bool)
 	for _, bidder := range Bidders {
-		go placeAdRequest(bidder, result)
+		go placeAdRequest(bidder, t.AdPlacementID, result)
 	}
 	go runTimer(timeDone)
 	var bids []Bid
@@ -54,48 +52,9 @@ func AdPlacementHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type Bid struct {
-	Bidder   string
-	BidPrice float64
-	AdID     string
-}
-
-type AdObject struct {
-	AdID     string  `json:"ad_id"`
-	BidPrice float64 `json:"bid_price"`
-}
-
 func runTimer(done chan<- bool) {
 	timer := time.NewTimer(200 * time.Millisecond)
 	<-timer.C
 	fmt.Println("timer expired")
 	done <- true
-}
-
-func placeAdRequest(bidder string, result chan<- Bid) {
-	timeout := time.Duration(200 * time.Millisecond)
-	client := http.Client{
-		Timeout: timeout,
-	}
-	payload := strings.NewReader("{\n\t\"ad_placement_id\": \"qwerty\"\n}")
-	resp, err := client.Post(bidder+"/adrequest", "application/json", payload)
-	if err != nil {
-		errObj := err.(*url.Error)
-		if errObj.Timeout() {
-			fmt.Println(fmt.Sprintf("%s bidder was shorted", bidder))
-		}
-		return
-	}
-	decoder := json.NewDecoder(resp.Body)
-	var adObj AdObject
-	err = decoder.Decode(&adObj)
-	if err != nil {
-		return
-	}
-	bid := Bid{
-		Bidder:   bidder,
-		BidPrice: adObj.BidPrice,
-		AdID:     adObj.AdID,
-	}
-	result <- bid
 }
