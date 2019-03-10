@@ -36,7 +36,6 @@ func placeAdRequest(bidder string, adPlacementID string, result chan<- Bid) {
 		}
 		return
 	}
-	fmt.Println(resp.Status, resp.ContentLength)
 	decoder := json.NewDecoder(resp.Body)
 	var adObj AdObject
 	err = decoder.Decode(&adObj)
