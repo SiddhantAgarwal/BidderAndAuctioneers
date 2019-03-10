@@ -33,7 +33,7 @@
     }------WebKitFormBoundary7MA4YWxkTrZu0gW--
     ```
 
-### Auctioner Exposed API's
+### Bidder Exposed API's
 * /adrequest
     ```
     POST /adrequest HTTP/1.1
