@@ -1,4 +1,4 @@
-# Auctioneer
+# Bidder
 
 *Auctioner service*
 
