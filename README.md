@@ -48,3 +48,8 @@
 ***
 The docker images are built on **scratch** they don't contain any linux libs to make the image sizes small.
 The binary of all services contains liked libs, so the images just contain the executable.
+
+The bidders name according to the service name are there in .env
+example: BIDDERS=bidder1,bidder2,bidder3,bidder4
+
+to add a bidder add a bidder service in docker-compose.yml and in .env to register it as a bidder
