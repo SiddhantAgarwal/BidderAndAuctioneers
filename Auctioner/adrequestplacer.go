@@ -26,14 +26,17 @@ func placeAdRequest(bidder string, adPlacementID string, result chan<- Bid) {
 		Timeout: timeout,
 	}
 	payload := strings.NewReader(fmt.Sprintf("{\n\t\"ad_placement_id\": \"%s\"\n}", adPlacementID))
-	resp, err := client.Post(bidder+"/adrequest", "application/json", payload)
+	resp, err := client.Post("http://"+bidder+"/adrequest", "application/json", payload)
 	if err != nil {
 		errObj := err.(*url.Error)
 		if errObj.Timeout() {
 			fmt.Println(fmt.Sprintf("%s bidder was shorted", bidder))
+		} else {
+			fmt.Println(err)
 		}
 		return
 	}
+	fmt.Println(resp.Status, resp.ContentLength)
 	decoder := json.NewDecoder(resp.Body)
 	var adObj AdObject
 	err = decoder.Decode(&adObj)

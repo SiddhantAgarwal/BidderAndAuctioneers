@@ -1,0 +1,39 @@
+version: "3"
+services:
+  auctioner:
+    build:
+      context: ./Auctioner
+      dockerfile: Dockerfile
+    env_file:
+     - ./.env 
+    restart: always
+    ports: 
+      - "8080:80"
+  bidder1:
+    build:
+      context: ./Bidder
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - "8081:80"
+  bidder2:
+    build:
+      context: ./Bidder
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - "8082:80"
+  bidder3:
+    build:
+      context: ./Bidder
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - "8083:80"
+  bidder4:
+    build:
+      context: ./Bidder
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - "8084:80"                

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -13,14 +14,16 @@ func main() {
 	fmt.Println("I am a greedy Auctioner, let's roll")
 	r := mux.NewRouter()
 
+	Bidders = strings.Split(os.Getenv("BIDDERS"), ",")
+
 	registerRoutes(r)
 
-	port := ":" + os.Args[1]
+	// port := ":" + os.Args[1]
 
 	// Basic middlewares
 	n := negroni.Classic()
 	n.UseHandler(r)
-	http.ListenAndServe(port, n)
+	http.ListenAndServe(":80", n)
 }
 
 // IndexHandler : Index route handler

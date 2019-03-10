@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -15,12 +14,15 @@ func main() {
 
 	registerRoutes(r)
 
-	port := ":" + os.Args[1]
+	// port := ":" + os.Args[1]
 
 	// Basic middlewares
 	n := negroni.Classic()
 	n.UseHandler(r)
-	http.ListenAndServe(port, n)
+	err := http.ListenAndServe(":80", n)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("%v", err))
+	}
 }
 
 // IndexHandler : Index route handler
