@@ -1,6 +1,6 @@
 # Bidder
 
-*Auctioner service*
+*Bidder service*
 
 ## Dependencies:
 * [gorilla/mux](https://github.com/gorilla/mux)
