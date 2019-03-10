@@ -10,12 +10,8 @@ import (
 
 func main() {
 	fmt.Println("Let's place some bids")
-	r := mux.NewRouter()
-
-	registerRoutes(r)
-
 	// port := ":" + os.Args[1]
-
+	r := GetRouter()
 	// Basic middlewares
 	n := negroni.Classic()
 	n.UseHandler(r)
@@ -35,4 +31,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 func registerRoutes(router *mux.Router) {
 	router.Methods("GET").Path("/").HandlerFunc(IndexHandler)
 	router.Methods("POST").Path("/adrequest").HandlerFunc(AdRequestHandler)
+}
+
+func GetRouter() *mux.Router {
+	r := mux.NewRouter()
+	registerRoutes(r)
+	return r
 }
