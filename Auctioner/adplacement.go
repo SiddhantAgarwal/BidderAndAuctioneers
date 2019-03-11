@@ -24,7 +24,9 @@ func AdPlacementHandler(w http.ResponseWriter, r *http.Request) {
 		SendJSONHttpResponse(w, resp, http.StatusBadRequest)
 		return
 	}
-	result := make(chan Bid)
+
+	// Make channel buffered according to number of bidders
+	result := make(chan Bid, len(Bidders))
 
 	// Dispatch requests to all bidders
 	for _, bidder := range Bidders {
@@ -38,6 +40,12 @@ func AdPlacementHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func processWinner(bids []Bid) *Bid {
+	bids = filter(bids, func(bid Bid) bool {
+		if bid.BidPrice == 0.0 && bid.AdID == "" {
+			return false
+		}
+		return true
+	})
 	sort.Slice(bids, func(i, j int) bool {
 		return bids[i].BidPrice > bids[j].BidPrice
 	})
@@ -45,4 +53,14 @@ func processWinner(bids []Bid) *Bid {
 		return &bids[0]
 	}
 	return nil
+}
+
+func filter(vs []Bid, f func(Bid) bool) []Bid {
+	bids := make([]Bid, 0)
+	for _, v := range vs {
+		if f(v) {
+			bids = append(bids, v)
+		}
+	}
+	return bids
 }

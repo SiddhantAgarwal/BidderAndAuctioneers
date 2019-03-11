@@ -12,6 +12,10 @@ func collector(result <-chan Bid) []Bid {
 		select {
 		case bid := <-result:
 			bids = append(bids, bid)
+			// if bids are complete
+			if len(bids) == len(Bidders) {
+				return bids
+			}
 		case <-done:
 			return bids
 		}

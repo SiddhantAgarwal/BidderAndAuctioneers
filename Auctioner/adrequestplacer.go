@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -20,12 +20,20 @@ type AdObject struct {
 	BidPrice float64 `json:"bid_price"`
 }
 
+type adRequestPostBody struct {
+	AdPlacementID string `json:"ad_placement_id"`
+}
+
 func placeAdRequest(bidder string, adPlacementID string, result chan<- Bid) {
 	timeout := time.Duration(200 * time.Millisecond)
 	client := http.Client{
 		Timeout: timeout,
 	}
-	payload := strings.NewReader(fmt.Sprintf("{\n\t\"ad_placement_id\": \"%s\"\n}", adPlacementID))
+
+	postBody := adRequestPostBody{AdPlacementID: adPlacementID}
+	marshalledBody, _ := json.Marshal(postBody)
+	payload := bytes.NewReader(marshalledBody)
+
 	resp, err := client.Post("http://"+bidder+"/adrequest", "application/json", payload)
 	if err != nil {
 		errObj := err.(*url.Error)
@@ -34,6 +42,11 @@ func placeAdRequest(bidder string, adPlacementID string, result chan<- Bid) {
 		} else {
 			fmt.Println(err)
 		}
+		return
+	}
+	// No bid case
+	if resp.StatusCode == http.StatusNoContent {
+		result <- Bid{}
 		return
 	}
 	decoder := json.NewDecoder(resp.Body)
